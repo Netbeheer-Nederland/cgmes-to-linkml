@@ -12,32 +12,34 @@ from cgmes2linkml.cgmes.model import (
 from cgmes2linkml.linkml.model import LinkMLClass, LinkMLAttribute, LinkMLSchema, LinkMLEnum, LinkMLEnumValue
 
 
-def _map_primitive_datatype(value):
-    match value:
-        case "#Float":
+def _map_datatype(datatype):
+    match datatype.iri.split("#")[-1]:
+        case "Float":
             return "float"
-        case "#Integer":
+        case "Integer":
             return "integer"
-        case "#DateTime":
+        case "DateTime":
             return "date"
-        case "#String":
+        case "String":
             return "string"
-        case "#Boolean":
+        case "Boolean":
             return "boolean"
-        case "#Decimal":
+        case "Decimal":
             return "double"  # Is this right?
-        case "#MonthDay":
+        case "MonthDay":
             return "date"  # Is this right?
-        case "#Date":
+        case "Date":
             return "date"
         case _:
-            return "string"  # TODO.
+            raise TypeError(f"Data type `{datatype.label}` is not a CIM Primitive.")
 
 
 def _generate_attribute(property_: CIMRDFSProperty) -> LinkMLAttribute:
-    if property_.datatype:
-        range_ = _map_primitive_datatype(property_.datatype)
-    else:
+    if property_.is_primitive:
+        range_ = _map_datatype(property_.datatype)
+    elif property_.datatype:
+        range_ = property_.datatype.label
+    elif property_.range:
         range_ = property_.range.label
 
     linkml_attr = LinkMLAttribute(

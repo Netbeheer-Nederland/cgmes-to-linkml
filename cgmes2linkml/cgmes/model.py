@@ -18,6 +18,7 @@ class CIMRDFSProperty(CIMRDFSResource):
     multiplicity: tuple[int, int]
     range: Optional[IRI] = None
     datatype: Optional[str] = None
+    is_primitive: Optional[bool] = None
     is_fixed: Optional[str] = None
 
 

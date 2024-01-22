@@ -3,8 +3,6 @@ from typing import Optional
 from xml.etree import ElementTree
 
 import xmltodict
-import yaml
-from pydantic import BaseModel, Field, PrivateAttr
 
 from cgmes2linkml.cgmes.model import (
     CIMRDFSClass,
@@ -147,12 +145,25 @@ def _parse_enum_value(resource) -> CIMRDFSEnumValue:
     )
 
 
-def _bind_properties_to_classes(classes, enums, properties):  # TODO: Rename such that it describes everything it does.
+def _bind_properties_to_classes(classes, enums, properties):
+    # TODO: Rename such that it describes everything it does.
+    # TODO: Split up in more functions and clean up.
     for property_iri, property_ in properties.items():
         class_ = classes[property_.domain]
         class_.attributes[property_iri] = property_
 
-        if property_.range:
+        if property_.datatype:
+            if datatype_class := classes.get(property_.datatype):
+                property_.is_primitive = "Primitive" in datatype_class.stereotypes
+                property_.datatype = classes[property_.datatype]
+            else:
+                property_.is_primitive = False
+                try:
+                    property_.datatype = classes[property_.datatype]
+                except KeyError:
+                    property_.datatype = enums[property_.datatype]
+        elif property_.range:
+            property_.is_primitive = False
             try:
                 property_.range = classes[property_.range]
             except KeyError:
