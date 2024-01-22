@@ -3,45 +3,50 @@ from typing import Optional
 from pydantic import BaseModel
 
 
-class RDF:
-    _ns = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-    Property = _ns + "Property"
-
-
-class RDFS:
-    _ns = "http://www.w3.org/2000/01/rdf-schema#"
-    Class = _ns + "Class"
-
-
-class TC57UML:
-    _ns = "http://iec.ch/TC57/NonStandard/UML#"
-    enumeration = _ns + "enumeration"
+IRI = str
 
 
 class CIMRDFSResource(BaseModel):
-    iri: str
+    iri: IRI
     label: str
     stereotypes: list[str]
     comment: Optional[str] = None
 
 
 class CIMRDFSProperty(CIMRDFSResource):
-    domain: str
-    multiplicity: tuple
-    range: Optional[str] = None
+    domain: IRI
+    multiplicity: tuple[int, int]
+    range: Optional[IRI] = None
     datatype: Optional[str] = None
     is_fixed: Optional[str] = None
 
 
 class CIMRDFSClass(CIMRDFSResource):
-    attributes: dict[str, CIMRDFSProperty]
-    subclass_of: Optional[str] = None
+    attributes: dict[IRI, CIMRDFSProperty]
+    subclass_of: Optional[IRI] = None
     belongs_to_category: Optional[str] = None
 
 
 class CIMRDFSEnumValue(CIMRDFSResource):
-    type: str
+    type: IRI
 
 
 class CIMRDFSEnumeration(CIMRDFSResource):
     values: dict[str, CIMRDFSEnumValue]
+
+
+class CGMESOntologyDeclaration(BaseModel):
+    keyword: str
+    version_info: str
+    creator: str
+    description: str
+    identifier: str
+    # issued: datetime
+    # modified: datetime
+    language: str
+    publisher: str
+    title: str
+
+
+class CGMESProfileDeclaration(CIMRDFSResource):
+    type: IRI

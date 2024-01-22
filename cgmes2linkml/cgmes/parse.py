@@ -6,7 +6,15 @@ import xmltodict
 import yaml
 from pydantic import BaseModel, Field, PrivateAttr
 
-from cgmes2linkml.cgmes.model import RDF, RDFS, CIMRDFSClass, CIMRDFSProperty, CIMRDFSEnumeration, CIMRDFSEnumValue, TC57UML
+from cgmes2linkml.cgmes.model import (
+    CIMRDFSClass,
+    CIMRDFSProperty,
+    CIMRDFSEnumeration,
+    CIMRDFSEnumValue,
+    CGMESOntologyDeclaration,
+    CGMESProfileDeclaration,
+)
+from cgmes2linkml.cgmes.vocabulary import RDF, RDFS, TC57UML
 
 N = sys.maxsize
 XML_BASE = "http://iec.ch/TC57/CIM100"
@@ -18,12 +26,31 @@ def _parse_namespaces(prof_fp):
     return {ns[1]: ns[0] for _, ns in tree_iter}  # {uri: prefix}
 
 
-def _parse_ontology_declaration(prof):
-    return prof["rdf:RDF"]["rdf:Description"][0]
+def _parse_ontology_declaration(header):
+    # Currently only English language tags are used, so we're not looking for anything else.
+    return CGMESOntologyDeclaration(
+        keyword=header["dcat:keyword"],
+        version_info=header["owl:versionInfo"]["#text"],
+        creator=header["dct:creator"]["#text"],
+        description=header["dct:description"]["#text"],
+        identifier=header["dct:identifier"],
+        # issued: datetime
+        # modified: datetime
+        language=header["dct:language"],
+        publisher=header["dct:publisher"]["#text"],
+        title=header["dct:title"]["#text"],
+    )
 
 
-def _parse_profile_declaration(prof):
-    return prof["rdf:RDF"]["rdf:Description"][1]
+def _parse_profile_declaration(resource):
+    # Currently only English language tags are used, so we're not looking for anything else.
+    return CGMESProfileDeclaration(
+        iri=resource["@rdf:about"],
+        label=_read_label(resource["rdfs:label"]),
+        type=resource["rdf:type"]["@rdf:resource"],
+        stereotypes=[],
+        comment=_read_comment(resource.get("rdfs:comment")),
+    )
 
 
 def _read_stereotype(stereotype):
@@ -120,9 +147,7 @@ def _parse_enum_value(resource) -> CIMRDFSEnumValue:
     )
 
 
-def _bind_properties_to_classes(
-    classes, enums, properties
-):  # TODO: Rename such that it describes everything it does.
+def _bind_properties_to_classes(classes, enums, properties):  # TODO: Rename such that it describes everything it does.
     for property_iri, property_ in properties.items():
         class_ = classes[property_.domain]
         class_.attributes[property_iri] = property_
@@ -140,8 +165,7 @@ def _bind_enum_values_to_enums(enums, enum_values):
         enum.values[enum_value_iri] = enum_value
 
 
-def parse_profile(prof_fp):
-    namespaces = _parse_namespaces(prof_fp)
+def _parse_profile_as_dict(prof_fp, namespaces):
     prof = xmltodict.parse(
         prof_fp.read_text(),
         process_namespaces=True,
@@ -149,8 +173,10 @@ def parse_profile(prof_fp):
         attr_prefix="@",
         cdata_key="#text",
     )
+    return prof
 
-    resources = prof["rdf:RDF"]["rdf:Description"][2:]
+
+def _parse_model(resources):
     classes = {}
     properties = {}
     enums = {}
@@ -177,3 +203,13 @@ def parse_profile(prof_fp):
     _bind_properties_to_classes(classes, enums, properties)
 
     return classes, enums
+
+
+def parse_profile(prof_fp):
+    namespaces = _parse_namespaces(prof_fp)
+    prof = _parse_profile_as_dict(prof_fp, namespaces)
+    ontology_meta = _parse_ontology_declaration(prof["rdf:RDF"]["rdf:Description"][0])
+    profile_meta = _parse_profile_declaration(prof["rdf:RDF"]["rdf:Description"][1])
+    classes, enums = _parse_model(prof["rdf:RDF"]["rdf:Description"][2:])
+
+    return namespaces, ontology_meta, profile_meta, classes, enums
