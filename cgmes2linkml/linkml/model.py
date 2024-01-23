@@ -18,7 +18,7 @@ class LinkMLAttribute(BaseModel):
 class LinkMLClass(BaseModel):
     _name: str = PrivateAttr(...)
     class_uri: str
-    attributes: dict[str, LinkMLAttribute]
+    attributes: Optional[dict[str, LinkMLAttribute]] = None
     is_a: Optional[str] = None
     description: Optional[str] = None
 
