@@ -1,6 +1,8 @@
 from pathlib import Path
 from typing import Optional
 
+import inflection
+
 from cgmes2linkml.cgmes.model import (
     CIMRDFSClass,
     CIMRDFSProperty,
@@ -58,7 +60,7 @@ def _generate_attribute(property_: CIMRDFSProperty, prefixes) -> LinkMLAttribute
         required=True if property_.multiplicity[0] > 0 else False,
         description=property_.comment,
     )
-    linkml_attr._name = property_.label
+    linkml_attr._name = inflection.underscore(property_.label)
 
     return linkml_attr
 
@@ -66,7 +68,11 @@ def _generate_attribute(property_: CIMRDFSProperty, prefixes) -> LinkMLAttribute
 def _generate_class(class_: CIMRDFSClass, prefixes: dict[str, str], super_class: Optional[str] = None) -> LinkMLClass:
     linkml_class = LinkMLClass(
         class_uri=_map_to_curie(class_.iri, prefixes),
-        attributes={attr.label: _generate_attribute(attr, prefixes) for attr in class_.attributes.values()} or None,
+        attributes={
+            inflection.underscore(attr.label): _generate_attribute(attr, prefixes)
+            for attr in class_.attributes.values()
+        }
+        or None,
         is_a=super_class,
         description=class_.comment,
     )
@@ -75,18 +81,18 @@ def _generate_class(class_: CIMRDFSClass, prefixes: dict[str, str], super_class:
     return linkml_class
 
 
-def _generate_enum(enum: CIMRDFSEnumeration) -> LinkMLEnum:
+def _generate_enum(enum: CIMRDFSEnumeration, prefixes: dict[str, str]) -> LinkMLEnum:
     linkml_enum = LinkMLEnum(
         enum_uri=enum.iri,
-        permissible_values={val.label: _generate_enum_value(val) for val in enum.values.values()},
+        permissible_values={val.label: _generate_enum_value(val, prefixes) for val in enum.values.values()},
     )
     linkml_enum._name = enum.label or enum.iri.split("#")[-1]
 
     return linkml_enum
 
 
-def _generate_enum_value(enum_val: CIMRDFSEnumValue) -> LinkMLEnumValue:
-    linkml_enum_val = LinkMLEnumValue(description=enum_val.comment, meaning=enum_val.iri)
+def _generate_enum_value(enum_val: CIMRDFSEnumValue, prefixes: dict[str, str]) -> LinkMLEnumValue:
+    linkml_enum_val = LinkMLEnumValue(description=enum_val.comment, meaning=_map_to_curie(enum_val.iri, prefixes))
     linkml_enum_val._name = enum_val.label or enum_val.iri.split("#")[-1]
 
     return linkml_enum_val
@@ -125,7 +131,7 @@ def generate_schema(
         schema.classes = None
 
     for enum in enums.values():
-        linkml_enum = _generate_enum(enum)
+        linkml_enum = _generate_enum(enum, prefixes)
         schema.enums[linkml_enum._name] = linkml_enum
     if not schema.enums:
         schema.enums = None
