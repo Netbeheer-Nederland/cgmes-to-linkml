@@ -1,2 +1,13 @@
 # cimrdfs2linkml
 Generate a LinkML schema from a CIM RDF schema (as per IEC 61970-501).
+
+## Running
+Install the dependencies, preferably using `poetry`, and make sure the (virtual) environment you're can find the `cimrdfs2linkml` package (e.g. by extending `$PYTHONPATH`).
+
+Then, to run the script, simply run:
+
+```shell
+$ python cimrdfs2linkml/main.py
+```
+
+This will read `data/IEC61970-600-2_CGMES_3_0_0_RDFS2020_EQ.rdf` and generate a LinkML schema from it, which is written to `out.yaml`.
