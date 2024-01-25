@@ -4,7 +4,7 @@ from xml.etree import ElementTree
 
 import xmltodict
 
-from cgmes2linkml.cgmes.model import (
+from cimrdfs2linkml.cimrdfs.model import (
     CIMRDFSClass,
     CIMRDFSProperty,
     CIMRDFSEnumeration,
@@ -12,7 +12,7 @@ from cgmes2linkml.cgmes.model import (
     CGMESOntologyDeclaration,
     CGMESProfileDeclaration,
 )
-from cgmes2linkml.cgmes.vocabulary import RDF, RDFS, TC57UML
+from cimrdfs2linkml.cimrdfs.vocabulary import RDF, RDFS, TC57UML
 
 N = sys.maxsize
 XML_BASE = "http://iec.ch/TC57/CIM100"

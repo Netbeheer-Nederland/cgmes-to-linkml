@@ -3,8 +3,8 @@ from pprint import pprint
 
 import yaml
 
-from cgmes2linkml.cgmes.parse import parse_profile
-from cgmes2linkml.linkml.generate import generate_schema
+from cimrdfs2linkml.cimrdfs.parse import parse_profile
+from cimrdfs2linkml.linkml.generate import generate_schema
 
 if __name__ == "__main__":
     root_dir = Path(".")

@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "cgmes2linkml"
+name = "cimrdfs2linkml"
 version = "0.1.0"
 description = ""
 authors = ["Bart Kleijngeld <bartkl@gmail.com>"]

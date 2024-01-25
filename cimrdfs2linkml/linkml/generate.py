@@ -1,9 +1,7 @@
 from pathlib import Path
 from typing import Optional
 
-import inflection
-
-from cgmes2linkml.cgmes.model import (
+from cimrdfs2linkml.cimrdfs.model import (
     CIMRDFSClass,
     CIMRDFSProperty,
     CGMESOntologyDeclaration,
@@ -11,7 +9,7 @@ from cgmes2linkml.cgmes.model import (
     CIMRDFSEnumeration,
     CIMRDFSEnumValue,
 )
-from cgmes2linkml.linkml.model import LinkMLClass, LinkMLAttribute, LinkMLSchema, LinkMLEnum, LinkMLEnumValue
+from cimrdfs2linkml.linkml.model import LinkMLClass, LinkMLAttribute, LinkMLSchema, LinkMLEnum, LinkMLEnumValue
 
 
 def _map_to_curie(uri: str, prefix_map: dict[str, str]) -> str:
@@ -60,7 +58,7 @@ def _generate_attribute(property_: CIMRDFSProperty, prefixes) -> LinkMLAttribute
         required=True if property_.multiplicity[0] > 0 else False,
         description=property_.comment,
     )
-    linkml_attr._name = inflection.underscore(property_.label)
+    linkml_attr._name = property_.label
 
     return linkml_attr
 
@@ -68,11 +66,7 @@ def _generate_attribute(property_: CIMRDFSProperty, prefixes) -> LinkMLAttribute
 def _generate_class(class_: CIMRDFSClass, prefixes: dict[str, str], super_class: Optional[str] = None) -> LinkMLClass:
     linkml_class = LinkMLClass(
         class_uri=_map_to_curie(class_.iri, prefixes),
-        attributes={
-            inflection.underscore(attr.label): _generate_attribute(attr, prefixes)
-            for attr in class_.attributes.values()
-        }
-        or None,
+        attributes={attr.label: _generate_attribute(attr, prefixes) for attr in class_.attributes.values()} or None,
         is_a=super_class,
         description=class_.comment,
     )
