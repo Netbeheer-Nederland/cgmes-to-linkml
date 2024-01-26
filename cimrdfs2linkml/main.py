@@ -11,7 +11,6 @@ if __name__ == "__main__":
     eq_prof_fp = root_dir / "data" / "IEC61970-600-2_CGMES_3_0_0_RDFS2020_EQ.rdf"
     namespaces, ontology_meta, profile_meta, classes, enums = parse_profile(eq_prof_fp)
     linkml_schema = generate_schema(namespaces, ontology_meta, profile_meta, classes, enums)
-
     # pprint(linkml_schema)
 
     with open("out.yaml", mode="w") as f:

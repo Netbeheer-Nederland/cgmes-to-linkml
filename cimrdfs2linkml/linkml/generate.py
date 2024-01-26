@@ -99,7 +99,7 @@ def generate_schema(
     classes: dict[str, CIMRDFSClass],
     enums: dict[str, CIMRDFSEnumeration],
 ):
-    prefixes = {"linkml": "https://w3id.org/linkml/", **{v: k for k, v in namespaces.items()}}
+    prefixes = {"linkml": "https://w3id.org/linkml/", **{v: k for k, v in namespaces.items()}, "this": profile_meta.iri}
     schema = LinkMLSchema(
         id=profile_meta.iri,
         name=profile_meta.label or ontology_meta.keyword,
@@ -108,7 +108,8 @@ def generate_schema(
         imports=["linkml:types"],
         default_curi_maps=["semweb_context"],
         default_range="string",
-        default_prefix=None,
+        default_prefix="this",
+        title=ontology_meta.title,
         classes={},
         slots={},
         enums={},

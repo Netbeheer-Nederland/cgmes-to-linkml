@@ -27,6 +27,7 @@ class LinkMLSchema(BaseModel):
     id: str
     name: str
     description: str
+    title: str
     prefixes: dict[str, str]
     imports: list[str]
     default_curi_maps: list[str]
