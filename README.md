@@ -1,5 +1,7 @@
 # cimrdfs2linkml
-Generate a LinkML schema from a CIM RDF schema (as per IEC 61970-501).
+Generates a LinkML schema from a CIM RDF schema (as per IEC 61970-501).
+
+Currently it only works with the RDFS 2020 serializations of the CGMES 3.0.0 profiles, since some assumptions with regards to the header are baked into the code. Support for other versions of CGMES profiles as well as other CIM RDF Schema models should be a relatively straightforward change of the code.
 
 ## Running
 Install the dependencies, preferably using `poetry`, and make sure the (virtual) environment you're can find the `cimrdfs2linkml` package (e.g. by extending `$PYTHONPATH`).
