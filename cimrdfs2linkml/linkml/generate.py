@@ -116,6 +116,8 @@ def generate_schema(
     )
 
     for class_iri, class_ in classes.items():
+        if "Primitive" in class_.stereotypes:
+            continue
         try:
             super_class_label = classes[classes[class_iri].subclass_of].label
         except KeyError:
