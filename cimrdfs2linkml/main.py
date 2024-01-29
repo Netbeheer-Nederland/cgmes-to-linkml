@@ -8,7 +8,8 @@ from cimrdfs2linkml.linkml.generate import generate_schema
 
 if __name__ == "__main__":
     root_dir = Path(".")
-    eq_prof_fp = root_dir / "data" / "IEC61970-600-2_CGMES_3_0_0_RDFS2020_EQ.rdf"
+    eq_prof_fp = root_dir / "data" / "IEC61970-600-2_CGMES_3_0_0_RDFS2020_DL.rdf"
+    # eq_prof_fp = root_dir / "data" / "IEC61970-600-2_CGMES_3_0_0_RDFS2020_EQ.rdf"
     namespaces, ontology_meta, profile_meta, classes, enums = parse_profile(eq_prof_fp)
     linkml_schema = generate_schema(namespaces, ontology_meta, profile_meta, classes, enums)
     # pprint(linkml_schema)

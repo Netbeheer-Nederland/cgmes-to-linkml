@@ -11,3 +11,6 @@ class RDFS:
 class TC57UML:
     _ns = "http://iec.ch/TC57/NonStandard/UML#"
     enumeration = _ns + "enumeration"
+
+class TC57RDFS:
+    _ns = "http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#"

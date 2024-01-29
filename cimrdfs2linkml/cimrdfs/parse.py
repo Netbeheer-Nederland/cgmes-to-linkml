@@ -12,7 +12,7 @@ from cimrdfs2linkml.cimrdfs.model import (
     CGMESOntologyDeclaration,
     CGMESProfileDeclaration,
 )
-from cimrdfs2linkml.cimrdfs.vocabulary import RDF, RDFS, TC57UML
+from cimrdfs2linkml.cimrdfs.vocabulary import RDF, RDFS, TC57UML, TC57RDFS
 
 N = sys.maxsize
 XML_BASE = "http://iec.ch/TC57/CIM100"
@@ -82,14 +82,18 @@ def _get_stereotypes(resource) -> Optional[list]:
 
 
 def _map_multiplicity(value):
-    return {
-        "http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:0..1": (0, 1),
-        "http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:0..2": (0, 2),
-        "http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:0..n": (0, N),
-        "http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:1": (1, 1),
-        "http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:1..1": (1, 1),
-        "http://iec.ch/TC57/1999/rdf-schema-extensions-19990926#M:1..n": (1, N),
-    }[value]
+    min_card, _, max_card = value.split(TC57RDFS._ns)[1].lstrip("M:").partition("..")
+    
+    min_card = int(min_card)
+
+    if max_card == "":
+        max_card = min_card
+    elif max_card.isdigit():
+        max_card = int(max_card)
+    elif max_card == "n":
+        max_card = N
+    
+    return (min_card, max_card)
 
 
 def _get_absolute_iri(uri, base_uri=XML_BASE):
