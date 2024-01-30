@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "cimrdfs2linkml"
-version = "0.1.0"
+version = "0.2.0"
 description = ""
 authors = ["Bart Kleijngeld <bartkl@gmail.com>"]
 readme = "README.md"
@@ -11,10 +11,15 @@ xmltodict = "^0.13.0"
 pydantic = "^2.5.3"
 pyyaml = "^6.0.1"
 inflection = "^0.5.1"
+click = "^8.1.7"
 
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.12.1"
+
+[tool.poetry.scripts]
+cimrdfs2linkml = "cimrdfs2linkml.main:cli"
+
 
 [build-system]
 requires = ["poetry-core"]
