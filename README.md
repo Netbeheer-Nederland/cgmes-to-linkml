@@ -11,10 +11,10 @@ Install the dependencies, preferably using `poetry`, and make sure the (virtual)
 Then, to run the script, simply run:
 
 ```shell
-$ python cimrdfs2linkml/main.py
+$ cim2rdfs /path/to/input_schema.rdf -o /path/to/output_schema.yaml
 ```
 
-This will read `data/IEC61970-600-2_CGMES_3_0_0_RDFS2020_EQ.rdf` and generate a LinkML schema from it, which is written to `out.yaml`.
+If you omit the `-o` option, the target schema will be written to `./out.yaml`. For further usage help you can provide the `--help` flag.
 
 ## Mapping
 The CIM RDF Schema distinguishes between several stereotypes of classes. The following are handled by `cimrdfs2linkml`:
