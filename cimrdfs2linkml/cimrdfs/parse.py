@@ -1,5 +1,4 @@
 import sys
-from typing import Optional
 from xml.etree import ElementTree
 
 import xmltodict
@@ -70,7 +69,7 @@ def _read_comment(comment):
         return comment["#text"]
 
 
-def _get_stereotypes(resource) -> Optional[list]:
+def _get_stereotypes(resource) -> list:
     stereotype_el = resource.get("cims:stereotype")
     match stereotype_el:
         case list():
