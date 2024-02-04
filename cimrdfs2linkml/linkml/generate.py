@@ -98,7 +98,7 @@ def generate_schema(
     profile_meta: CGMESProfileDeclaration,
     classes: dict[str, CIMRDFSClass],
     enums: dict[str, CIMRDFSEnumeration],
-):
+) -> LinkMLSchema:
     prefixes = {"linkml": "https://w3id.org/linkml/", **{v: k for k, v in namespaces.items()}, "this": profile_meta.iri}
     schema = LinkMLSchema(
         id=profile_meta.iri,
