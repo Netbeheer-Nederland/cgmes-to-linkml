@@ -12,6 +12,10 @@ from cimrdfs2linkml.cimrdfs.model import (
 from cimrdfs2linkml.linkml.model import LinkMLClass, LinkMLAttribute, LinkMLSchema, LinkMLEnum, LinkMLEnumValue
 
 
+def _camel_to_snake(s):
+    return ''.join(['_'+c.lower() if c.isupper() else c for c in s]).lstrip('_')
+
+
 def _map_to_curie(uri: str, prefix_map: dict[str, str]) -> str:
     for ns_prefix, ns_uri in prefix_map.items():
         try:
@@ -58,7 +62,7 @@ def _generate_attribute(property_: CIMRDFSProperty, prefixes) -> LinkMLAttribute
         required=True if property_.multiplicity[0] > 0 else False,
         description=property_.comment,
     )
-    linkml_attr._name = property_.label
+    linkml_attr._name = _camel_to_snake(property_.label)
 
     return linkml_attr
 
@@ -66,7 +70,7 @@ def _generate_attribute(property_: CIMRDFSProperty, prefixes) -> LinkMLAttribute
 def _generate_class(class_: CIMRDFSClass, prefixes: dict[str, str], super_class: Optional[str] = None) -> LinkMLClass:
     linkml_class = LinkMLClass(
         class_uri=_map_to_curie(class_.iri, prefixes),
-        attributes={attr.label: _generate_attribute(attr, prefixes) for attr in class_.attributes.values()} or None,
+        attributes={_camel_to_snake(attr.label): _generate_attribute(attr, prefixes) for attr in class_.attributes.values()} or None,
         is_a=super_class,
         description=class_.comment,
     )
