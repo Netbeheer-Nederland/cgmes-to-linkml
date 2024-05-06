@@ -77,7 +77,7 @@ def _generate_class(class_: CIMRDFSClass, prefixes: dict[str, str], super_class:
 
 def _generate_enum(enum: CIMRDFSEnumeration, prefixes: dict[str, str]) -> LinkMLEnum:
     linkml_enum = LinkMLEnum(
-        enum_uri=enum.iri,
+        enum_uri=_map_to_curie(enum.iri, prefixes),
         permissible_values={val.label: _generate_enum_value(val, prefixes) for val in enum.values.values()},
     )
     linkml_enum._name = enum.label or enum.iri.split("#")[-1]
