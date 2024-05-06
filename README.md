@@ -11,7 +11,7 @@ Install the dependencies, preferably using `poetry`, and make sure the (virtual)
 Then, to run the script, simply run:
 
 ```shell
-$ cim2rdfs /path/to/input_schema.rdf -o /path/to/output_schema.yaml
+$ cimrdfs2linkml /path/to/input_schema.rdf -o /path/to/output_schema.yaml
 ```
 
 If you omit the `-o` option, the target schema will be written to `./out.yaml`. For further usage help you can provide the `--help` flag.
