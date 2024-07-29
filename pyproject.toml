@@ -15,7 +15,8 @@ click = "^8.1.7"
 
 
 [tool.poetry.group.dev.dependencies]
-black = "^24.3.0"
+black = "^24"
+
 
 [tool.poetry.scripts]
 cimrdfs2linkml = "cimrdfs2linkml.main:cli"
